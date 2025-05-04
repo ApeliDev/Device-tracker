@@ -1,0 +1,1190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Location Tracker Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-map-marked-alt"></i> Advanced Location Tracker Dashboard</h1>
+            <div class="btn-group">
+                <button class="btn btn-outline" id="exportData">
+                    <i class="fas fa-file-export"></i> Export Data
+                </button>
+                <button class="btn btn-primary" id="refreshDevices">
+                    <i class="fas fa-sync-alt"></i> Refresh
+                </button>
+            </div>
+        </div>
+        
+        <div class="dashboard">
+            <div class="sidebar">
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="searchDevices" placeholder="Search devices...">
+                </div>
+                <h3>Tracked Devices</h3>
+                <div class="device-list" id="devicesList">
+                    <div class="device-item">
+                        <div class="loading"></div> Loading devices...
+                    </div>
+                </div>
+            </div>
+            
+            <div class="main-content">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-title">Total Devices</div>
+                        <div class="stat-value" id="totalDevices">--</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-title">Active Today</div>
+                        <div class="stat-value" id="activeToday">--</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-title">Locations Recorded</div>
+                        <div class="stat-value" id="totalLocations">--</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-title">Unique Locations</div>
+                        <div class="stat-value" id="uniqueLocations">--</div>
+                    </div>
+                </div>
+                
+                <div class="card" id="deviceDetailsCard" style="display: none;">
+                    <h2 id="selectedDevice">Device Details</h2>
+                    
+                    <div class="tabs">
+                        <div class="tab active" data-tab="overview">Overview</div>
+                        <div class="tab" data-tab="locations">Location History</div>
+                        <div class="tab" data-tab="technical">Technical Details</div>
+                        <div class="tab" data-tab="analytics">Analytics</div>
+                    </div>
+                    
+                    <div class="tab-content active" id="overviewTab">
+                        <div class="device-details-grid">
+                            <div>
+                                <div class="device-image">
+                                    <i class="fas fa-mobile-alt"></i>
+                                </div>
+                                <div class="detail-card">
+                                    <div class="detail-title">Device Identification</div>
+                                    <div class="detail-value" id="deviceName">--</div>
+                                    <div class="device-id" id="deviceFullId">--</div>
+                                </div>
+                                
+                                <div class="detail-card">
+                                    <div class="detail-title">Activity Summary</div>
+                                    <div class="info-grid">
+                                        <div class="info-item">
+                                            <div class="info-label">First Seen</div>
+                                            <div class="info-value" id="firstSeen">--</div>
+                                        </div>
+                                        <div class="info-item">
+                                            <div class="info-label">Last Seen</div>
+                                            <div class="info-value" id="lastSeen">--</div>
+                                        </div>
+                                        <div class="info-item">
+                                            <div class="info-label">Total Sessions</div>
+                                            <div class="info-value" id="visitCount">--</div>
+                                        </div>
+                                        <div class="info-item">
+                                            <div class="info-label">Status</div>
+                                            <div class="info-value" id="deviceStatus">--</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="detail-card">
+                                    <div class="detail-title">Recent Activity</div>
+                                    <div class="activity-timeline" id="activityTimeline">
+                                        <div class="activity-item">
+                                            <div class="activity-icon">
+                                                <i class="fas fa-clock"></i>
+                                            </div>
+                                            <div class="activity-content">
+                                                <div class="activity-description">Loading activity...</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <div class="detail-card">
+                                    <div class="detail-title">Current Location</div>
+                                    <div class="map-container">
+                                        <div id="map"></div>
+                                    </div>
+                                    <div class="info-grid" style="margin-top: 16px;">
+                                        <div class="info-item">
+                                            <div class="info-label">Coordinates</div>
+                                            <div class="info-value" id="currentCoords">--</div>
+                                        </div>
+                                        <div class="info-item">
+                                            <div class="info-label">Accuracy</div>
+                                            <div class="info-value" id="currentAccuracy">--</div>
+                                        </div>
+                                        <div class="info-item">
+                                            <div class="info-label">Last Update</div>
+                                            <div class="info-value" id="lastUpdate">--</div>
+                                        </div>
+                                        <div class="info-item">
+                                            <div class="info-label">IP Address</div>
+                                            <div class="info-value" id="currentIp">--</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="detail-card">
+                                    <div class="detail-title">Location Path</div>
+                                    <div class="location-path" id="locationPathChart">
+                                        <canvas></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="tab-content" id="locationsTab">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <h3>Location History</h3>
+                            <div class="timestamp" id="lastUpdated">Last updated: --</div>
+                        </div>
+                        <div style="overflow-x: auto;">
+                            <table id="locationsTable">
+                                <thead>
+                                    <tr>
+                                        <th>Time</th>
+                                        <th>Coordinates</th>
+                                        <th>Accuracy</th>
+                                        <th>IP Address</th>
+                                        <th>Browser</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="locationsList">
+                                    <tr>
+                                        <td colspan="6" class="no-data">
+                                            <i class="fas fa-map-pin"></i>
+                                            <p>No device selected</p>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <div class="tab-content" id="technicalTab">
+                        <h3>Technical Information</h3>
+                        <div class="info-grid">
+                            <div class="info-item">
+                                <div class="info-label">Browser</div>
+                                <div class="info-value" id="techBrowser">--</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">Browser Version</div>
+                                <div class="info-value" id="techBrowserVersion">--</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">Operating System</div>
+                                <div class="info-value" id="techOS">--</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">Device Type</div>
+                                <div class="info-value" id="techDeviceType">--</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">Screen Resolution</div>
+                                <div class="info-value" id="techScreenRes">--</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">Viewport Size</div>
+                                <div class="info-value" id="techViewport">--</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">Color Depth</div>
+                                <div class="info-value" id="techColorDepth">--</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">Timezone</div>
+                                <div class="info-value" id="techTimezone">--</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">Language</div>
+                                <div class="info-value" id="techLanguage">--</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">Cookies Enabled</div>
+                                <div class="info-value" id="techCookies">--</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">Do Not Track</div>
+                                <div class="info-value" id="techDNT">--</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">Connection Type</div>
+                                <div class="info-value" id="techConnection">--</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">RAM</div>
+                                <div class="info-value" id="techRAM">--</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">CPU Cores</div>
+                                <div class="info-value" id="techCPUCores">--</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">WebGL Vendor</div>
+                                <div class="info-value" id="techWebGLVendor">--</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">WebGL Renderer</div>
+                                <div class="info-value" id="techWebGLRenderer">--</div>
+                            </div>
+                        </div>
+                        
+                        <h3 style="margin-top: 24px;">Fingerprint Information</h3>
+                        <div class="info-grid">
+                            <div class="info-item">
+                                <div class="info-label">Fingerprint ID</div>
+                                <div class="info-value" id="techFingerprint">--</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">Hardware UUID</div>
+                                <div class="info-value" id="techHardwareUUID">--</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">Canvas Fingerprint</div>
+                                <div class="info-value" id="techCanvasFP">--</div>
+                            </div>
+                        </div>
+                        
+                        <h3 style="margin-top: 24px;">Installed Plugins</h3>
+                        <div id="pluginsList" style="background-color: var(--light); padding: 12px; border-radius: 8px;">
+                            <div class="info-value">Loading plugins...</div>
+                        </div>
+                        
+                        <h3 style="margin-top: 24px;">Installed Fonts</h3>
+                        <div id="fontsList" style="background-color: var(--light); padding: 12px; border-radius: 8px;">
+                            <div class="info-value">Loading fonts...</div>
+                        </div>
+                    </div>
+                    
+                    <div class="tab-content" id="analyticsTab">
+                        <h3>Device Analytics</h3>
+                        <div class="chart-container">
+                            <canvas id="activityChart"></canvas>
+                        </div>
+                        
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 24px;">
+                            <div>
+                                <h3>Browser Usage</h3>
+                                <div class="chart-container">
+                                    <canvas id="browserChart"></canvas>
+                                </div>
+                            </div>
+                            <div>
+                                <h3>Operating Systems</h3>
+                                <div class="chart-container">
+                                    <canvas id="osChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <h3 style="margin-top: 24px;">Location Heatmap</h3>
+                        <div class="map-container" style="height: 400px;">
+                            <div id="heatmap"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card" id="noDeviceSelected">
+                    <div class="no-data">
+                        <i class="fas fa-mobile-alt"></i>
+                        <h3>No Device Selected</h3>
+                        <p>Select a device from the sidebar to view detailed information</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/heatmap.js@2.0.5/build/heatmap.min.js"></script>
+    <script src="https://unpkg.com/leaflet-heatmap@1.0.0/leaflet-heatmap.js"></script>
+    <script>
+        // Global variables
+        let selectedDeviceId = null;
+        let devicesData = [];
+        let locationsData = [];
+        let map = null;
+        let heatmap = null;
+        let markers = [];
+        let activityChart = null;
+        let browserChart = null;
+        let osChart = null;
+        let locationPathChart = null;
+        
+        // Initialize the dashboard
+        document.addEventListener('DOMContentLoaded', function() {
+            fetchDevices();
+            setupEventListeners();
+            initTabs();
+        });
+        
+        // Initialize tab functionality
+        function initTabs() {
+            const tabs = document.querySelectorAll('.tab');
+            tabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    // Remove active class from all tabs and content
+                    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                    
+                    // Add active class to clicked tab and corresponding content
+                    this.classList.add('active');
+                    const tabId = this.getAttribute('data-tab');
+                    document.getElementById(`${tabId}Tab`).classList.add('active');
+                    
+                    // If analytics tab is selected, redraw charts
+                    if (tabId === 'analytics') {
+                        drawCharts();
+                    }
+                });
+            });
+        }
+        
+        // Setup event listeners
+        function setupEventListeners() {
+            document.getElementById('refreshDevices').addEventListener('click', fetchDevices);
+            document.getElementById('exportData').addEventListener('click', exportData);
+            
+            // Search functionality
+            document.getElementById('searchDevices').addEventListener('input', function() {
+                const searchTerm = this.value.toLowerCase();
+                const deviceItems = document.querySelectorAll('.device-item');
+                
+                deviceItems.forEach(item => {
+                    const deviceName = item.querySelector('.device-name').textContent.toLowerCase();
+                    const deviceId = item.querySelector('.device-id').textContent.toLowerCase();
+                    
+                    if (deviceName.includes(searchTerm) || deviceId.includes(searchTerm)) {
+                        item.style.display = 'block';
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+            });
+        }
+        
+       
+        function fetchDevices() {
+            document.getElementById('devicesList').innerHTML = `
+                <div class="device-item">
+                    <div class="loading"></div> Loading devices...
+                </div>
+            `;
+            
+            fetch('/devices')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    // Handle both possible response formats
+                    const devices = data.devices || (Array.isArray(data) ? data : []);
+                    devicesData = devices;
+                    displayDevices();
+                    updateStats();
+                    
+                    // If a device was previously selected, try to reselect it
+                    if (selectedDeviceId) {
+                        const deviceExists = devicesData.some(device => device.device_id === selectedDeviceId);
+                        if (deviceExists) {
+                            selectDevice(selectedDeviceId);
+                        } else {
+                            // Previously selected device no longer exists
+                            selectedDeviceId = null;
+                            showNoDeviceSelected();
+                        }
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching devices:', error);
+                    document.getElementById('devicesList').innerHTML = `
+                        <div class="device-item error">
+                            <i class="fas fa-exclamation-circle"></i> 
+                            <div>Error loading devices</div>
+                            <small>${error.message}</small>
+                        </div>
+                        <button class="btn btn-sm" onclick="fetchDevices()">
+                            <i class="fas fa-sync-alt"></i> Retry
+                        </button>
+                    `;
+                });
+        }
+        
+        // Function to display devices in the sidebar
+        function displayDevices() {
+            const devicesList = document.getElementById('devicesList');
+            
+            if (devicesData.length === 0) {
+                devicesList.innerHTML = `
+                    <div class="no-data">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <p>No devices found</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            let html = '';
+            devicesData.forEach(device => {
+                const isSelected = device.device_id === selectedDeviceId;
+                const lastSeen = new Date(device.last_seen);
+                const now = new Date();
+                const hoursDiff = (now - lastSeen) / (1000 * 60 * 60);
+                const status = hoursDiff < 24 ? 'active' : 'inactive';
+                
+                // Try to parse metadata for device name
+                let deviceName = device.device_name || 'Unnamed Device';
+                try {
+                    const metadata = JSON.parse(device.metadata || '{}');
+                    if (metadata.browser && metadata.operating_system) {
+                        deviceName = `${metadata.browser} on ${metadata.operating_system}`;
+                    }
+                } catch (e) {
+                    console.error('Error parsing device metadata:', e);
+                }
+                
+                html += `
+                    <div class="device-item ${isSelected ? 'selected' : ''}" data-id="${device.device_id}">
+                        <div class="device-name">
+                            ${deviceName}
+                            <span class="badge ${status === 'active' ? 'badge-success' : 'badge-warning'}">
+                                ${status === 'active' ? 'Active' : 'Inactive'}
+                            </span>
+                        </div>
+                        <div class="device-id">${device.device_id.substring(0, 12)}...</div>
+                        <div class="device-meta">
+                            <span>Last seen: ${formatDateTime(device.last_seen)}</span>
+                            <span>${device.location_count || 0} locs</span>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            devicesList.innerHTML = html;
+            
+            // Add event listeners to the device items
+            document.querySelectorAll('.device-item').forEach(item => {
+                item.addEventListener('click', function() {
+                    const deviceId = this.getAttribute('data-id');
+                    selectDevice(deviceId);
+                });
+            });
+        }
+        
+        // Function to select a device and fetch its details - Updated version
+        function selectDevice(deviceId) {
+            selectedDeviceId = deviceId;
+            
+            // Show loading state
+            document.getElementById('noDeviceSelected').style.display = 'none';
+            document.getElementById('deviceDetailsCard').style.display = 'block';
+            document.getElementById('deviceDetailsCard').innerHTML = `
+                <div style="padding: 40px; text-align: center;">
+                    <div class="loading"></div>
+                    <p>Loading device details...</p>
+                </div>
+            `;
+            
+            // Highlight the selected device
+            document.querySelectorAll('.device-item').forEach(item => {
+                if (item.getAttribute('data-id') === deviceId) {
+                    item.classList.add('selected');
+                } else {
+                    item.classList.remove('selected');
+                }
+            });
+            
+            // Get the selected device
+            const selectedDevice = devicesData.find(device => device.device_id === deviceId);
+            if (selectedDevice) {
+                updateDeviceDetails(selectedDevice);
+            }
+            
+            // Fetch locations for the selected device
+            Promise.all([
+                fetch(`/locations/${deviceId}`).then(res => res.json()),
+                fetch(`/device/${deviceId}`).then(res => res.json())
+            ])
+            .then(([locationsResp, deviceResp]) => {
+                locationsData = locationsResp.locations || [];
+                displayLocations();
+                updateMap();
+                updateLastUpdated();
+                updateTechnicalDetails();
+                drawCharts();
+                updateDeviceAnalytics(deviceResp);
+            })
+            .catch(error => {
+                console.error('Error loading device data:', error);
+                document.getElementById('deviceDetailsCard').innerHTML = `
+                    <div class="error-state">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <h3>Error Loading Device</h3>
+                        <p>${error.message || 'Could not load device details'}</p>
+                        <button class="btn" onclick="selectDevice('${deviceId}')">
+                            <i class="fas fa-sync-alt"></i> Try Again
+                        </button>
+                    </div>
+                `;
+            });
+        }
+        
+        // Function to show no device selected state
+        function showNoDeviceSelected() {
+            document.getElementById('noDeviceSelected').style.display = 'block';
+            document.getElementById('deviceDetailsCard').style.display = 'none';
+        }
+        
+        // Function to update device details in the UI
+        function updateDeviceDetails(device) {
+            // Basic device info
+            document.getElementById('deviceName').textContent = device.device_name || 'Unnamed Device';
+            document.getElementById('deviceFullId').textContent = device.device_id;
+            document.getElementById('firstSeen').textContent = formatDateTime(device.first_seen);
+            document.getElementById('lastSeen').textContent = formatDateTime(device.last_seen);
+            document.getElementById('visitCount').textContent = device.visit_count || 1;
+            
+            // Device status
+            const lastSeen = new Date(device.last_seen);
+            const now = new Date();
+            const hoursDiff = (now - lastSeen) / (1000 * 60 * 60);
+            const status = hoursDiff < 24 ? 'Online' : hoursDiff < 72 ? 'Recently Active' : 'Inactive';
+            
+            const statusElement = document.getElementById('deviceStatus');
+            statusElement.textContent = status;
+            statusElement.className = 'info-value';
+            
+            if (status === 'Online') {
+                statusElement.classList.add('badge-success');
+            } else if (status === 'Recently Active') {
+                statusElement.classList.add('badge-info');
+            } else {
+                statusElement.classList.add('badge-warning');
+            }
+            
+            // Fingerprint info
+            document.getElementById('techFingerprint').textContent = device.fingerprint_id || 'Unknown';
+            document.getElementById('techHardwareUUID').textContent = device.hardware_uuid || 'Unknown';
+            
+            // Try to parse metadata
+            try {
+                const metadata = JSON.parse(device.metadata || '{}');
+                if (metadata.browser) {
+                    document.getElementById('techBrowser').textContent = metadata.browser;
+                }
+                if (metadata.operating_system) {
+                    document.getElementById('techOS').textContent = metadata.operating_system;
+                }
+                if (metadata.device_type) {
+                    document.getElementById('techDeviceType').textContent = metadata.device_type;
+                }
+            } catch (e) {
+                console.error('Error parsing device metadata:', e);
+            }
+        }
+        
+        // fetch detailed device information
+        function fetchDeviceDetails(deviceId) {
+            fetch(`/device/${deviceId}`)
+                .then(response => response.json())
+                .then(data => {
+                    updateDeviceAnalytics(data);
+                })
+                .catch(error => {
+                    console.error('Error fetching device details:', error);
+                });
+        }
+        
+        // Function to update device analytics
+        function updateDeviceAnalytics(data) {
+            // Update statistics
+            if (data.statistics) {
+                document.getElementById('techBrowser').textContent = data.statistics.latest_browser || 'Unknown';
+                document.getElementById('techBrowserVersion').textContent = data.statistics.browser_version || 'Unknown';
+                document.getElementById('techOS').textContent = data.statistics.latest_os || 'Unknown';
+                document.getElementById('techDeviceType').textContent = data.statistics.device_type || 'Unknown';
+                document.getElementById('techScreenRes').textContent = data.statistics.screen_resolution || 'Unknown';
+                document.getElementById('techWebGLRenderer').textContent = data.statistics.graphics_card || 'Unknown';
+            }
+            
+            // Update activity timeline
+            const timeline = document.getElementById('activityTimeline');
+            if (data.ip_addresses && data.ip_addresses.length > 0) {
+                let html = '';
+                
+                // Add IP address changes
+                data.ip_addresses.forEach((ip, index) => {
+                    html += `
+                        <div class="activity-item">
+                            <div class="activity-icon">
+                                <i class="fas fa-network-wired"></i>
+                            </div>
+                            <div class="activity-content">
+                                <div class="activity-time">${index === 0 ? 'Current' : 'Previous'} IP</div>
+                                <div class="activity-description">
+                                    ${ip.ip_address} (used ${ip.frequency} times)
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                timeline.innerHTML = html;
+            } else {
+                timeline.innerHTML = `
+                    <div class="activity-item">
+                        <div class="activity-icon">
+                            <i class="fas fa-info-circle"></i>
+                        </div>
+                        <div class="activity-content">
+                            <div class="activity-description">No additional activity data available</div>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+        
+        // Function to fetch locations for a device
+        function fetchLocations(deviceId) {
+            document.getElementById('locationsList').innerHTML = `
+                <tr>
+                    <td colspan="6">
+                        <div style="display: flex; justify-content: center; padding: 20px;">
+                            <div class="loading"></div> Loading location history...
+                        </div>
+                    </td>
+                </tr>
+            `;
+            
+            fetch(`/locations/${deviceId}`)
+                .then(response => response.json())
+                .then(data => {
+                    locationsData = data.locations || [];
+                    displayLocations();
+                    updateMap();
+                    updateLastUpdated();
+                    updateTechnicalDetails();
+                    drawCharts();
+                })
+                .catch(error => {
+                    console.error('Error fetching locations:', error);
+                    document.getElementById('locationsList').innerHTML = `
+                        <tr>
+                            <td colspan="6" class="no-data">
+                                <i class="fas fa-exclamation-circle"></i>
+                                <p>Error loading location history</p>
+                            </td>
+                        </tr>
+                    `;
+                });
+        }
+        
+        // Function to display locations in the table
+        function displayLocations() {
+            const locationsList = document.getElementById('locationsList');
+            
+            if (locationsData.length === 0) {
+                locationsList.innerHTML = `
+                    <tr>
+                        <td colspan="6" class="no-data">
+                            <i class="fas fa-map-pin"></i>
+                            <p>No location history found</p>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            let html = '';
+            locationsData.forEach(location => {
+                const timeAgo = formatTimeAgo(location.created_at);
+                
+                html += `
+                    <tr>
+                        <td>
+                            <div>${formatDateTime(location.created_at)}</div>
+                            <small class="timestamp">${timeAgo}</small>
+                        </td>
+                        <td>
+                            <div>${location.latitude}, ${location.longitude}</div>
+                            <small class="timestamp">${getLocationLink(location.latitude, location.longitude)}</small>
+                        </td>
+                        <td>${location.accuracy || '--'} meters</td>
+                        <td>${location.ip_address || '--'}</td>
+                        <td>
+                            ${location.browser || '--'} ${location.browser_version ? `(${location.browser_version})` : ''}
+                        </td>
+                        <td>
+                            <span class="badge badge-success">Recorded</span>
+                        </td>
+                    </tr>
+                `;
+            });
+            
+            locationsList.innerHTML = html;
+        }
+        
+        // Function to update technical details from location data
+        function updateTechnicalDetails() {
+            if (locationsData.length === 0) return;
+            
+            // Get the most recent location for technical details
+            const latestLocation = locationsData[0];
+            
+            // Update technical details
+            document.getElementById('techBrowser').textContent = latestLocation.browser || 'Unknown';
+            document.getElementById('techBrowserVersion').textContent = latestLocation.browser_version || 'Unknown';
+            document.getElementById('techOS').textContent = latestLocation.operating_system || 'Unknown';
+            document.getElementById('techDeviceType').textContent = latestLocation.device_type || 'Unknown';
+            document.getElementById('techScreenRes').textContent = latestLocation.screen_resolution || 'Unknown';
+            document.getElementById('techViewport').textContent = latestLocation.viewport_size || 'Unknown';
+            document.getElementById('techColorDepth').textContent = latestLocation.color_depth ? `${latestLocation.color_depth}-bit` : 'Unknown';
+            document.getElementById('techTimezone').textContent = latestLocation.timezone || 'Unknown';
+            document.getElementById('techLanguage').textContent = latestLocation.language || 'Unknown';
+            document.getElementById('techCookies').textContent = latestLocation.cookies_enabled ? 'Yes' : 'No';
+            document.getElementById('techDNT').textContent = latestLocation.do_not_track || 'Unknown';
+            document.getElementById('techConnection').textContent = latestLocation.connection_type || 'Unknown';
+            document.getElementById('techRAM').textContent = latestLocation.ram || 'Unknown';
+            document.getElementById('techCPUCores').textContent = latestLocation.cpu_cores || 'Unknown';
+            document.getElementById('techWebGLVendor').textContent = latestLocation.webgl_vendor || 'Unknown';
+            document.getElementById('techWebGLRenderer').textContent = latestLocation.webgl_renderer || 'Unknown';
+            document.getElementById('techCanvasFP').textContent = latestLocation.canvas_fingerprint ? latestLocation.canvas_fingerprint.substring(0, 20) + '...' : 'Unknown';
+            
+            // Update plugins
+            const pluginsList = document.getElementById('pluginsList');
+            try {
+                const plugins = JSON.parse(latestLocation.installed_plugins || '[]');
+                if (plugins.length > 0) {
+                    pluginsList.innerHTML = plugins.map(plugin => 
+                        `<div class="info-item"><div class="info-value">${plugin.name || 'Unknown'} (${plugin.description || 'No description'})</div></div>`
+                    ).join('');
+                } else {
+                    pluginsList.innerHTML = '<div class="info-value">No plugins detected</div>';
+                }
+            } catch (e) {
+                pluginsList.innerHTML = '<div class="info-value">Error loading plugins</div>';
+            }
+            
+            // Update fonts
+            const fontsList = document.getElementById('fontsList');
+            try {
+                const fonts = JSON.parse(latestLocation.installed_fonts || '[]');
+                if (fonts.length > 0) {
+                    fontsList.innerHTML = '<div style="column-count: 2; column-gap: 20px;">' + 
+                        fonts.map(font => `<div class="info-value" style="margin-bottom: 4px;">${font}</div>`).join('') + 
+                        '</div>';
+                } else {
+                    fontsList.innerHTML = '<div class="info-value">No fonts detected</div>';
+                }
+            } catch (e) {
+                fontsList.innerHTML = '<div class="info-value">Error loading fonts</div>';
+            }
+        }
+        
+        // Function to update the map with the latest location
+        function updateMap() {
+            const mapContainer = document.getElementById('map');
+            
+            if (locationsData.length === 0) {
+                mapContainer.innerHTML = `
+                    <div class="map-placeholder">
+                        <i class="fas fa-map-marked-alt"></i>
+                        <p>No location data available</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            // Get the most recent location
+            const latestLocation = locationsData[0];
+            
+            // Initialize map if not already done
+            if (!map) {
+                map = L.map('map').setView([latestLocation.latitude, latestLocation.longitude], 13);
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                }).addTo(map);
+                
+                // Initialize heatmap layer
+                heatmap = L.heatLayer([], { radius: 15, blur: 15, maxZoom: 17 }).addTo(map);
+            } else {
+                map.setView([latestLocation.latitude, latestLocation.longitude], 13);
+            }
+            
+            // Clear existing markers
+            markers.forEach(marker => map.removeLayer(marker));
+            markers = [];
+            
+            // Add markers for all locations (most recent first)
+            const reversedLocations = [...locationsData].reverse();
+            reversedLocations.forEach((location, index) => {
+                const marker = L.marker([location.latitude, location.longitude], {
+                    icon: L.divIcon({
+                        className: 'location-marker',
+                        html: `<div style="background-color: ${index === reversedLocations.length - 1 ? '#4361ee' : '#4cc9f0'}; 
+                               width: 12px; height: 12px; border-radius: 50%; border: 2px solid white;"></div>`,
+                        iconSize: [16, 16]
+                    })
+                }).addTo(map);
+                
+                // Add popup with location info
+                marker.bindPopup(`
+                    <b>Location</b><br>
+                    ${location.latitude}, ${location.longitude}<br><br>
+                    <b>Time</b><br>
+                    ${formatDateTime(location.created_at)}<br><br>
+                    <b>Accuracy</b><br>
+                    ${location.accuracy || '--'} meters<br><br>
+                    <b>IP Address</b><br>
+                    ${location.ip_address || '--'}
+                `);
+                
+                markers.push(marker);
+            });
+            
+            // Update heatmap data
+            const heatmapData = locationsData.map(loc => [loc.latitude, loc.longitude, 1]);
+            heatmap.setLatLngs(heatmapData);
+            
+            // Update current location info
+            document.getElementById('currentCoords').textContent = `${latestLocation.latitude}, ${latestLocation.longitude}`;
+            document.getElementById('currentAccuracy').textContent = `${latestLocation.accuracy || '--'} meters`;
+            document.getElementById('lastUpdate').textContent = `${formatDateTime(latestLocation.created_at)} (${formatTimeAgo(latestLocation.created_at)})`;
+            document.getElementById('currentIp').textContent = latestLocation.ip_address || '--';
+        }
+        
+        // Function to draw analytics charts
+        function drawCharts() {
+            if (locationsData.length === 0) return;
+            
+            // Prepare data for charts
+            const locationTimes = locationsData.map(loc => new Date(loc.created_at));
+            const locationCountsByHour = Array(24).fill(0);
+            
+            locationTimes.forEach(time => {
+                const hour = time.getHours();
+                locationCountsByHour[hour]++;
+            });
+            
+            // Activity chart (locations by hour)
+            const activityCtx = document.getElementById('activityChart').getContext('2d');
+            if (activityChart) activityChart.destroy();
+            
+            activityChart = new Chart(activityCtx, {
+                type: 'line',
+                data: {
+                    labels: Array.from({length: 24}, (_, i) => `${i}:00`),
+                    datasets: [{
+                        label: 'Locations per hour',
+                        data: locationCountsByHour,
+                        backgroundColor: 'rgba(67, 97, 238, 0.2)',
+                        borderColor: 'rgba(67, 97, 238, 1)',
+                        borderWidth: 2,
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Location Count'
+                            }
+                        },
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Hour of Day'
+                            }
+                        }
+                    }
+                }
+            });
+            
+            // Browser chart
+            const browserCtx = document.getElementById('browserChart').getContext('2d');
+            if (browserChart) browserChart.destroy();
+            
+            const browserCounts = {};
+            locationsData.forEach(loc => {
+                const browser = loc.browser || 'Unknown';
+                browserCounts[browser] = (browserCounts[browser] || 0) + 1;
+            });
+            
+            browserChart = new Chart(browserCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: Object.keys(browserCounts),
+                    datasets: [{
+                        data: Object.values(browserCounts),
+                        backgroundColor: [
+                            'rgba(67, 97, 238, 0.7)',
+                            'rgba(76, 201, 240, 0.7)',
+                            'rgba(248, 150, 30, 0.7)',
+                            'rgba(247, 37, 133, 0.7)',
+                            'rgba(72, 149, 239, 0.7)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'right'
+                        }
+                    }
+                }
+            });
+            
+            // OS chart
+            const osCtx = document.getElementById('osChart').getContext('2d');
+            if (osChart) osChart.destroy();
+            
+            const osCounts = {};
+            locationsData.forEach(loc => {
+                const os = loc.operating_system || 'Unknown';
+                osCounts[os] = (osCounts[os] || 0) + 1;
+            });
+            
+            osChart = new Chart(osCtx, {
+                type: 'pie',
+                data: {
+                    labels: Object.keys(osCounts),
+                    datasets: [{
+                        data: Object.values(osCounts),
+                        backgroundColor: [
+                            'rgba(67, 97, 238, 0.7)',
+                            'rgba(76, 201, 240, 0.7)',
+                            'rgba(248, 150, 30, 0.7)',
+                            'rgba(247, 37, 133, 0.7)',
+                            'rgba(72, 149, 239, 0.7)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'right'
+                        }
+                    }
+                }
+            });
+            
+            // Location path chart
+            const pathCtx = document.getElementById('locationPathChart').querySelector('canvas').getContext('2d');
+            if (locationPathChart) locationPathChart.destroy();
+            
+            // Get unique locations (group nearby points)
+            const uniqueLocations = [];
+            const threshold = 0.0001; // ~11 meters
+            
+            locationsData.forEach(loc => {
+                const isUnique = !uniqueLocations.some(ul => 
+                    Math.abs(ul.latitude - loc.latitude) < threshold && 
+                    Math.abs(ul.longitude - loc.longitude) < threshold
+                );
+                
+                if (isUnique) {
+                    uniqueLocations.push(loc);
+                }
+            });
+            
+            // Sort by time
+            uniqueLocations.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+            
+            locationPathChart = new Chart(pathCtx, {
+                type: 'scatter',
+                data: {
+                    datasets: [{
+                        label: 'Location Path',
+                        data: uniqueLocations.map(loc => ({
+                            x: loc.longitude,
+                            y: loc.latitude
+                        })),
+                        backgroundColor: 'rgba(67, 97, 238, 0.7)',
+                        borderColor: 'rgba(67, 97, 238, 1)',
+                        borderWidth: 1,
+                        showLine: true,
+                        pointRadius: 5
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            type: 'linear',
+                            position: 'bottom',
+                            title: {
+                                display: true,
+                                text: 'Longitude'
+                            }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'Latitude'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        
+        // Function to update statistics
+        function updateStats() {
+            document.getElementById('totalDevices').textContent = devicesData.length;
+            
+            // Calculate active today (devices seen in last 24 hours)
+            const now = new Date();
+            const activeToday = devicesData.filter(device => {
+                const lastSeen = new Date(device.last_seen);
+                return (now - lastSeen) < (24 * 60 * 60 * 1000);
+            }).length;
+            
+            document.getElementById('activeToday').textContent = activeToday;
+            
+            // Get total locations count
+            fetch('/statistics')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('totalLocations').textContent = data.location_count || '--';
+                    document.getElementById('uniqueLocations').textContent = '--'; 
+                })
+                .catch(error => {
+                    console.error('Error fetching statistics:', error);
+                });
+        }
+        
+        // Function to update last updated timestamp
+        function updateLastUpdated() {
+            const now = new Date();
+            document.getElementById('lastUpdated').textContent = `Last updated: ${formatDateTime(now)}`;
+        }
+        
+        // Function to export all data
+        function exportData() {
+            fetch('/export')
+                .then(response => response.json())
+                .then(data => {
+                    // Create a download link for the JSON data
+                    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(data, null, 2));
+                    const downloadAnchorNode = document.createElement('a');
+                    downloadAnchorNode.setAttribute("href", dataStr);
+                    downloadAnchorNode.setAttribute("download", `location_tracker_export_${new Date().toISOString().split('T')[0]}.json`);
+                    document.body.appendChild(downloadAnchorNode);
+                    downloadAnchorNode.click();
+                    downloadAnchorNode.remove();
+                    
+                    // Show a temporary notification
+                    showNotification('Data exported successfully', 'success');
+                })
+                .catch(error => {
+                    console.error('Error exporting data:', error);
+                    showNotification('Error exporting data', 'error');
+                });
+        }
+        
+        // Helper function to show notifications
+        function showNotification(message, type) {
+            const notification = document.createElement('div');
+            notification.style.position = 'fixed';
+            notification.style.bottom = '20px';
+            notification.style.right = '20px';
+            notification.style.backgroundColor = type === 'success' ? 'var(--success)' : 'var(--danger)';
+            notification.style.color = 'white';
+            notification.style.padding = '12px 24px';
+            notification.style.borderRadius = '8px';
+            notification.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)';
+            notification.style.zIndex = '1000';
+            notification.innerHTML = `<i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i> ${message}`;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.opacity = '0';
+                notification.style.transition = 'opacity 0.5s ease';
+                setTimeout(() => notification.remove(), 500);
+            }, 3000);
+        }
+        
+        // Helper function to format date and time
+        function formatDateTime(isoString) {
+            if (!isoString) return 'Unknown';
+            try {
+                const date = new Date(isoString);
+                return date.toLocaleString('en-US', {
+                    month: 'short',
+                    day: 'numeric',
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+            } catch (e) {
+                return isoString;
+            }
+        }
+        
+        // Helper function to format time ago
+        function formatTimeAgo(isoString) {
+            if (!isoString) return '';
+            try {
+                const date = new Date(isoString);
+                const now = new Date();
+                const seconds = Math.floor((now - date) / 1000);
+                
+                if (seconds < 60) return `${seconds} seconds ago`;
+                if (seconds < 3600) return `${Math.floor(seconds / 60)} minutes ago`;
+                if (seconds < 86400) return `${Math.floor(seconds / 3600)} hours ago`;
+                return `${Math.floor(seconds / 86400)} days ago`;
+            } catch (e) {
+                return '';
+            }
+        }
+        
+        // Helper function to get Google Maps link
+        function getLocationLink(lat, lng) {
+            return `<a href="https://www.google.com/maps?q=${lat},${lng}" target="_blank" style="color: var(--primary); text-decoration: none;">View on Map</a>`;
+        }
+        
+        // Simulate real-time updates (for demo purposes)
+        setInterval(() => {
+            if (selectedDeviceId) {
+                fetchLocations(selectedDeviceId);
+            }
+        }, 30000);
+    </script>
+</body>
+</html>

